@@ -1,5 +1,5 @@
-import express from require ('express');
-import Book from require('../models/Book.js');
+import express from 'express';
+import Book from '../models/Book.js'
 
 const router = express.Router();
 
@@ -9,10 +9,31 @@ router.get('/', async (req, res) => {
   res.json(books);
 });
 
-router.post('/', async (req, res) => {
-  const newBook = new Book(req.body);
-  const savedBook = await newBook.save();
-  res.status(201).json(savedBook)
+router.get('/:id', async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const book = await Book.findById(bookId);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found!" })
+    }
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching book", error: error.message });
+  }
 });
 
-module.exports = router;
+router.post('/', async (req, res) => {
+  try {
+    const newBook = new Book(req.body);
+    const savedBook = await newBook.save();
+
+    res.status(201).json(savedBook)
+  } catch (error) {
+    res.status(400).json({ message: "Error saving book", error: error.message });
+  }
+
+});
+
+
+export default router;

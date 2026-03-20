@@ -9,4 +9,9 @@ const port = 3001;
 
 connectDB();
 
-app.use(express)
+app.use(express.json());
+app.use('/api/books', bookRoutes);
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
